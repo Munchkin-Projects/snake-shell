@@ -1,0 +1,109 @@
+#!/usr/bin/python3
+
+import getpass
+import os
+import time
+
+
+def MakeDirectory(path_or_name):
+    try:
+        os.mkdir(path_or_name)
+    except FileExistsError:
+        print(f"mkdir: Error: Directory {path_or_name} exists already.")
+        return 17
+    except PermissionError:
+        print("mkdir: Error: Permission denied.")
+        return 13
+    except Exception as e:
+        print(f"mkdir: Error: Unexpected error! {e}.")
+        return 1
+    else:
+        return 0
+                
+
+
+def ListFiles(path):
+    try:
+        lffiles = os.listdir(path)
+        print(f"Files in {path}:")
+        for file in lffiles:
+            print(file)
+    except FileNotFoundError:
+        print(f"lf: Error: Directory '{path}'does not exist.")
+        return 2
+    except NotADirectoryError:
+        print(f"lf: Error: Directory '{path}' is not a directory.")
+        return 20
+    except PermissionError:
+        print(f"lf: Error: Permission denied.")
+        return 13
+    except Exception as e:
+        print(f"lf: Error: Unexpected error! {e}.")
+        return 1
+    else:
+        return 0
+
+def ChangeDirectory(path):
+    try:
+        os.chdir(path)
+    except FileNotFoundError:  # counters the error of the file not existing
+        print(f"cd: Error: Directory '{path}' does not exist.")
+        return 2
+    except NotADirectoryError:  # counters the error when the the path is a file
+        print(f"cd: Error: {path} is not a directory.")
+        return 20
+    except PermissionError:  # counter the error of having too low permission to access
+        print(f"cd: Error: Permission denied.")
+        return 13
+    except Exception as e:
+        print(f"cd: Error: Unexpected error! {e}.")
+        return 1
+    else:
+        return 0
+
+    
+def HelpInformation():
+    print("cd: Changes directory using path.")
+    print("cusr: Prints username.")
+    print("cwd: Prints current working directory.")
+    print("echo: Prints text.")
+    print("exit: Exits out of the shell.")
+    print("mkdir: Makes a directory")
+    print("lf: prints the directory using path.")
+    print("help: Prints out this quick explanation.")
+
+print("Type 'help' for simple instructions.")
+
+def main():
+    while True:
+        command = input(f"\033[34m{getpass.getuser()}\033[0m \033[32m@\033[0m ")
+
+        if command == "exit":
+            break
+        elif command.startswith("cd "): 
+            cdpath = command[3:].strip() 
+            ChangeDirectory(cdpath)
+            continue
+        elif command == "cwd":
+            print(os.getcwd())
+        elif command == "cusr":
+            print(getpass.getuser())
+        elif command.startswith("echo "):
+            echotext = command[5:].strip()
+            print(echotext)
+        elif command == "help":
+            HelpInformation()
+        elif command.startswith("lf "):
+            lfpath = command[3:].strip()
+            ListFiles(lfpath)
+        elif command.startswith("mkdir "):
+            mkdirfile = command[6:].strip()
+            MakeDirectory(mkdirfile)
+        else:
+            print("Command not found.")
+    
+if __name__ == "__main__":
+    main()
+
+#end
+        
